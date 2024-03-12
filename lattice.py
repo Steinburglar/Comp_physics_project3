@@ -48,8 +48,12 @@ class Lattice:
                 if self.lat.at[lat_list[i][0], lat_list[i][1]] != 0:
                     self.lat.at[lat_list[i][0], lat_list[i][1]] = -1*(self.lat.at[lat_list[i][0], lat_list[i][1]])
 
-    def getE(self):
-        return 0
+    def get_energy(lattice):
+    # we apply the nearest neighbor sum to a 2d lattice
+        kern = generate_binary_structure(2,1)
+        kern[1][1] = False
+        arr = -lattice * convolve(lattice, kern, mode='constant', cval=0)
+        return arr.sum
     
     def get_lattice(self):
         return self.lat
@@ -64,3 +68,4 @@ class Lattice:
         plt.clf()
         plt.imshow(self.lat)
                         
+    

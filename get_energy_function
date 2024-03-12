@@ -1,1 +1,12 @@
-def get_energy(
+import numpy as np
+import matplotlib.pyplot as plt
+import numba
+from numba import njit
+from scipy.ndimage import convolve, generate_binary_structure
+
+def get_energy(lattice) 
+# we apply the nearest neighbor sum to a 2d lattice
+kern = generate_binary_structure(2, 1)
+kern[1][1] = False
+arr = -lattice * convolve(lattice, kern, mode='constant', cval=0)
+return arr.sum()

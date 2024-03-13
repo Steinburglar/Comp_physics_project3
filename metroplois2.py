@@ -1,5 +1,5 @@
 """
-Metropolis Algorithm class
+Metroplois Algorithm class
 Shahd Ahmed
 3/12/2024
 
@@ -13,35 +13,34 @@ from scipy import constants
 import matplotlib.pyplot as plt
 import numba
 from numba import njit
-import lattic_class.py
+import graph
+import random
 
 
-
-class Metropolis:
+class Metroplois:
   
-    def __init__(self, lattice):
-        self.lattice = lattice
-       
+    def __init__(self, graph, T):
+        self.graph = graph
+        self.T = T
     
     def random_node(self):
 #       picks a random node in the lattice
-        x = random.randint(0, self.lattice.size)
-        y = random.randint(0, self.lattice.size)
+        x = random.randint(0, 10)
+        y = random.randint(0, 10)
         node_coor = [x, y]
 #       get list of coordinates 
         return node_coor
-    
   
     def evaluate_delta(self, node):
-        delta = self.lattice.get_delta(node)
-        k = constants.k
+        delta = self.graph.get_delta(node)
+        k = 1
         if delta <0 or random(0,1) <= np.exp(-delta/(k*self.T)):
             return True
         else:
             return False
     
     #@numba.njit("UniTuple(f8[:], 2)(f8[:,:], i8, f8, f8)", nopython=True, nogil=True)
-    def run_metropolis(self, steps):
+    def run_metroplois(self, steps):
         temp = []  # List to store temperatures
         energy_array = []  # List to store energy values
         mag_array = []  # List to store magnetization values
@@ -49,18 +48,17 @@ class Metropolis:
             node = self.random_node()
             check = self.evaluate_delta(node)
             if check == True:
-                new_lattice = self.lattice.flip(node) #returns new lattice configuration 
+                new_lattice = self.graph.flip(node) #returns new lattice configuration 
                 temp.append(T)  # range of temperatures
-                energy_array.append(self.lattice.getE(node)) #create an array appends all energies 
-                mag_array.append(self.lattice.get_lattice.values.sum())  #append sum of spins
-                if()
-                self.lattice.color_lattice(new_lattice)
+                energy_array.append(self.graph.getE(node)) #create an array appends all energies 
+                mag_array.append(self.graph.getM())  #append sum of spins
+              
+                #self.lattice.color_lattice(new_lattice)
         return temp, energy_array, mag_array
             
-
     def plot_ene_mag(self, steps):
 
-        temp, energy_array, mag_array = run_metropolis(self, steps)
+        temp, energy_array, mag_array = run_metroplois(steps)
         fig, ax = plt.subplots(1, 2, figsize=(12,4))
         ax[0].plot(temp, energy_array)
         ax[0].set_xlabel('Temperature')
@@ -71,3 +69,7 @@ class Metropolis:
         ax[1].grid()
         ax[0].grid()
         plt.show()
+
+
+
+

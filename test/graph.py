@@ -7,6 +7,8 @@ Module containing a class for representing a lattice structure ising model as a 
 
 import random
 import pandas as pd
+import lattice
+import matplotlib.pyplot as plt
 class graph:
     
     def __init__(self, J):
@@ -109,14 +111,30 @@ class graph:
             after = self.getE(node)
             return after-before
     
-def flattened_index(coords, N):
-            """
-            function to return the flattened index of a point at i, j
-            @param: coords: should be list of two elements: i, j, which are the index of the location in a 2d dataframe
-            """
-            i = coords[0]
-            j = coords[1]
-            return i*N + j
+    def flattened_index(self, coords,):
+                """
+                function to return the flattened index of a point at i, j
+                @param: coords: should be list of two elements: i, j, which are the index of the location in a 2d dataframe
+                """
+                i = coords[0]
+                j = coords[1]
+                return i*self.N + j
+
+    def unflattened_index(self, node_index):
+        """
+        returns the coordinates of a node
+        """
+        i = int(node_index/self.N)
+        j = node_index % self.N
+        return i, j
+    
+    def display(self):
+        df = self.vertex.reshape(self.M, self.N)
+        plt.imshow(df)
+
+
+
+     
     
 def adjacency_list(lattice, dimension):
             """

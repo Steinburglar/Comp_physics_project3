@@ -63,6 +63,7 @@ class graph():
         side effects: none
         returns: energy associated with node/nodes
         """
+        node = flattened_index(nodes) #needs work
         sum = 0 #initialize energy E
         if isinstance(nodes, int): #if just one node
             node = nodes

@@ -7,7 +7,6 @@ Module containing a class for representing a lattice structure ising model as a 
 
 import random
 import pandas as pd
-import lattice
 class graph:
     
     def __init__(self, J):
@@ -41,6 +40,8 @@ class graph:
         """
         # for 2D:
         M, N = lattice.shape
+        self.M = M
+        self.N = N
         self.adj = adjacency_list(lattice, dimension)
         self.vertex = lattice.values.flatten()
 
@@ -64,6 +65,7 @@ class graph:
         side effects: none
         returns: energy associated with node/nodes
         """
+        node = flattened_index(nodes, self.N) #needs work
         sum = 0 #initialize energy E
         if isinstance(nodes, int): #if just one node
             node = nodes
@@ -99,7 +101,15 @@ class graph:
             sum += self.vertex
         return sum
 
-    def flattened_index(coords, N):
+
+    def get_delta(self, node):
+            #flips a node or sections of nodes and gets the energy delta
+            before= self.getE(node)
+            self.flip(node)
+            after = self.getE(node)
+            return after-before
+    
+def flattened_index(coords, N):
             """
             function to return the flattened index of a point at i, j
             @param: coords: should be list of two elements: i, j, which are the index of the location in a 2d dataframe
@@ -108,7 +118,7 @@ class graph:
             j = coords[1]
             return i*N + j
     
-    def adjacency_list(lattice, dimension):
+def adjacency_list(lattice, dimension):
             """
             function to build an adjacency out of the lattice. used as part of the graph initialize method.
             returns an M*N dataframe, where the values are lists of the flattened index of the adjacent nodes
@@ -131,10 +141,3 @@ class graph:
                     matrix.at[i, j] = neighbors
             adjacency_list = matrix.values.flatten()
             return adjacency_list
-
-    def get_delta(self, node):
-            #flips a node or sections of nodes and gets the energy delta
-            before= self.getE(node)
-            self.flip(node)
-            after = self.getE(node)
-            return after-before

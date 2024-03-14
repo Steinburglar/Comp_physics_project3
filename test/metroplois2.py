@@ -13,7 +13,7 @@ from scipy import constants
 import matplotlib.pyplot as plt
 import numba
 from numba import njit
-import graph
+#import graph
 import random
 
 

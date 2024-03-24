@@ -101,8 +101,8 @@ class graph:
         method to get the current total magnetism of the lattice/graph
         """
         sum = 0
-        for vertex in self.vertex:
-            sum += self.vertex
+        for i in self.vertex:
+            sum += i
         return sum
 
 

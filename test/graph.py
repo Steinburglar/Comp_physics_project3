@@ -5,6 +5,7 @@ Module containing a class for representing a lattice structure ising model as a 
 """
 
 
+import numpy as np
 import random
 import pandas as pd
 import lattice
@@ -41,10 +42,10 @@ class graph:
             tells the method whether to interpret the lattice as 2D or 3D
         """
         # for 2D:
-        M, N = lattice.shape
+        M, N = lattice.values.shape
         self.M = M
         self.N = N
-        self.adj = adjacency_list(lattice, dimension)
+        self.adj = self.adjacency_list()
         self.vertex = lattice.values.flatten()
 
     def flip(self, nodes):
@@ -67,7 +68,7 @@ class graph:
         side effects: none
         returns: energy associated with node/nodes
         """
-        node = flattened_index(nodes, self.N) #needs work
+        node = self.flattened_index(nodes) #needs work
         sum = 0 #initialize energy E
         if isinstance(nodes, int): #if just one node
             node = nodes
@@ -128,34 +129,36 @@ class graph:
         j = node_index % self.N
         return i, j
     
-    def display(self):
-        df = self.vertex.reshape(self.M, self.N)
-        plt.imshow(df)
-
-
-
-     
-    
-def adjacency_list(lattice, dimension):
+    def adjacency_list(self):
             """
             function to build an adjacency out of the lattice. used as part of the graph initialize method.
             returns an M*N dataframe, where the values are lists of the flattened index of the adjacent nodes
             """
-            M, N = lattice.shape
+            M = self.M
+            N = self.N
             empty_frame = [[[] for _ in range(M)] for _ in range(N)]
             matrix  = pd.DataFrame(empty_frame)
             for i in range(M):
                 for j in range(N):
                     neighbors = []
                     if i > 0:
-                        neighbors.append(flattened_index([i-1,j], N))
+                        neighbors.append(self.flattened_index([i-1,j]))
                     if i < (M-2):
-                        neighbors.append(flattened_index([i+1,j], N))
+                        neighbors.append(self.flattened_index([i-1,j]))
                     if j > 0:
-                        neighbors.append(flattened_index([i,j-1], N))
+                        neighbors.append(self.flattened_index([i-1,j]))
                     if j < (N-2):
-                        neighbors.append(flattened_index([i,j+1], N))
+                        neighbors.append(self.flattened_index([i-1,j]))
                     
                     matrix.at[i, j] = neighbors
             adjacency_list = matrix.values.flatten()
             return adjacency_list
+
+    def display(self):
+        df = np.array(self.vertex).reshape(self.M, self.N)
+        plt.imshow(df)
+
+
+
+     
+    

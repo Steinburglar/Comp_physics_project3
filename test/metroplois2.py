@@ -25,8 +25,8 @@ class Metroplois:
     
     def random_node(self):
 #       picks a random node in the lattice
-        x = random.randint(0, 10)
-        y = random.randint(0, 10)
+        x = random.randrange(0, self.graph.M)
+        y = random.randrange(0, self.graph.N)
         node_coor = [x, y]
 #       get list of coordinates 
         return node_coor
@@ -34,7 +34,7 @@ class Metroplois:
     def evaluate_delta(self, node):
         delta = self.graph.get_delta(node)
         k = 1
-        if delta <0 or random(0,1) <= np.exp(-delta/(k*self.T)):
+        if delta <0 or random.random() <= np.exp(-delta/(k*self.T)):
             return True
         else:
             return False
@@ -48,8 +48,8 @@ class Metroplois:
             node = self.random_node()
             check = self.evaluate_delta(node)
             if check == True:
-                new_lattice = self.graph.flip(node) #returns new lattice configuration 
-                temp.append(T)  # range of temperatures
+                self.graph.flip(node) #updates graph to new lattice configuration 
+                temp.append(self.T)  # range of temperatures
                 energy_array.append(self.graph.getE(node)) #create an array appends all energies 
                 mag_array.append(self.graph.getM())  #append sum of spins
               
@@ -58,7 +58,7 @@ class Metroplois:
             
     def plot_ene_mag(self, steps):
 
-        temp, energy_array, mag_array = run_metroplois(steps)
+        temp, energy_array, mag_array = self.run_metroplois(steps)
         fig, ax = plt.subplots(1, 2, figsize=(12,4))
         ax[0].plot(temp, energy_array)
         ax[0].set_xlabel('Temperature')

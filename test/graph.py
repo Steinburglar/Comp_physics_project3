@@ -48,43 +48,44 @@ class graph:
         self.adj = self.adjacency_list()
         self.vertex = lattice.values.flatten()
 
-    def flip(self, nodes):
+    def flip(self, node):
         """
         Method to flip one or more nodes/vertices of the graph
-        @param: nodes: This is either a single integer or a list of integers, that are the index of the nodes to be flipped
+        @param: nodes: for now, this is a duple list of the unflatenned (i, j) index of the node in the lattice
+        **** need to make possible for group of nodes, for wolff aglo****
         side effects: flips nodes
         returns: none
         """
-        if isinstance(nodes, int):
-            self.vertex[nodes] = -1*self.vertex[nodes]
-        else:
-            for node in nodes:
-                self.vertex[nodes] = -1*self.vertex[nodes]
-
-    def getE(self, nodes):
+        node = self.flattened_index(node)
+        self.vertex[node] = -1*self.vertex[node]
+        #right now this only works for one node at a time, in 2 dimensions
+        
+        
+    def getE(self, node):
         """
         Method to find the energy associated with a node or a group of nodes (in the case of a cluster)
-        @param: nodes: This is either a single integer or a list of integers, that are the index of the nodes to be flipped
+        @param: nodes: for now, this is a duple list of the unflatenned (i, j) index of the node in the lattice
+        **** need to make possible for group of nodes, for wolff aglo****???
         side effects: none
         returns: energy associated with node/nodes
         """
-        node = self.flattened_index(nodes) #needs work
+        node = self.flattened_index(node)
         sum = 0 #initialize energy E
-        if isinstance(nodes, int): #if just one node
-            node = nodes
-            for neighbor in self.adj[node]:
-                sum += self.vertex[neighbor] * self.vertex[node]
+        for neighbor in self.adj[node]:
+            sum += self.vertex[neighbor] * self.vertex[node]
 
+        """
         else: #if multiple nodes
             completed_pairs = [] #keep track of pairs that are already checked
             for node in nodes:
-                for neighbor in self.adj(node):
+                for neighbor in self.adj[node]:
                     pair = [node, neighbor]
                     pair_inv = [neighbor, node]
                     if pair not in completed_pairs or pair_inv not in completed_pairs:
                         sum += self.vertex[node] * self.vertex[neighbor]
                         completed_pairs.append(pair)
-        E = self.J*(-1)*(sum)
+        """
+        E = self.J*(sum)
         return E
     
     def randomize_all(self):
@@ -110,7 +111,7 @@ class graph:
             before= self.getE(node)
             self.flip(node)
             after = self.getE(node)
-            return after-before
+            return (after-before)
     
     def flattened_index(self, coords,):
                 """

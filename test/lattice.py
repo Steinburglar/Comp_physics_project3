@@ -22,6 +22,8 @@ class Lattice:
         #initialize lattice grid --> 10x10 square grid filled w zeros
         data = [[0 for _ in range(size)] for _ in range(size)]
         self.size = size
+        self.M = size
+        self.N = size
         self.shape = shape
         self.lat = pd.DataFrame(data)
             
@@ -41,15 +43,42 @@ class Lattice:
                         
     #change spin (takes in a list of coordinates)
     def flip(self, lat_list):
-        if type(lat_list) is not list:
-            if self.lat.at[lat_list[0], lat_list[1]] != 0:
-                self.lat.at[lat_list[0], lat_list[1]] = -1*(self.lat.at[lat_list[0], lat_list[1]])
+        
+        if self.lat.at[lat_list[0], lat_list[1]] != 0:
+            self.lat.at[lat_list[0], lat_list[1]] = -1*(self.lat.at[lat_list[0], lat_list[1]])
+        """
         else:
             for i in range(len(lat_list)):
                 if self.lat.at[lat_list[i][0], lat_list[i][1]] != 0:
                     self.lat.at[lat_list[i][0], lat_list[i][1]] = -1*(self.lat.at[lat_list[i][0], lat_list[i][1]])
+        """
     def getE(self, node):
-        return 0
+        # we apply the nearest neighbor sum to a 2d lattice
+        lattice = self.lat.values
+        kern = generate_binary_structure(2, 1)
+        kern[1][1] = False
+        arr = -lattice * convolve(lattice, kern, mode='constant', cval=0)
+        return arr.sum()
+
+    
+    def getM(self):
+        sum = 0
+        size = self.size
+        for i in range(size):
+            for j in range(size):
+                sum += self.lat.at[i, j]
+        if sum <0:
+            sum = -1*sum
+        return sum
+        
+
+    def randomize_all(self):
+        size = self.size
+        for i in range(size):
+            for j in range(size):
+                if self.lat.at[i,j] !=0:
+                    self.lat.at[i, j] = random.choice([1,-1])
+
     
     def get_lattice(self):
         return self.lat

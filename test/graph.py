@@ -72,7 +72,7 @@ class graph:
         node = self.flattened_index(node)
         sum = 0 #initialize energy E
         for neighbor in self.adj[node]:
-            sum += self.vertex[neighbor] * self.vertex[node]
+            sum += (self.vertex[neighbor] * self.vertex[node])
 
         """
         else: #if multiple nodes
@@ -108,7 +108,7 @@ class graph:
 
     def get_delta(self, node):
             #flips a node or sections of nodes and gets the energy delta
-            before= self.getE(node)
+            before = self.getE(node)
             self.flip(node)
             after = self.getE(node)
             return (after-before)
@@ -154,6 +154,11 @@ class graph:
                     matrix.at[i, j] = neighbors
             adjacency_list = matrix.values.flatten()
             return adjacency_list
+
+    def get_array(self):
+         array = np.array(self.vertex).reshape(self.M, self.N)
+         df = pd.DataFrame(array)
+         return df
 
     def display(self):
         df = np.array(self.vertex).reshape(self.M, self.N)

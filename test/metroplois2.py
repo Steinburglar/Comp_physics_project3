@@ -5,17 +5,13 @@ Shahd Ahmed
 
 
 """
-
-
-
 import numpy as np
 import copy
-from scipy import constants
 import matplotlib.pyplot as plt
 import numba
-from numba import njit
-#import graph
 import random
+import matplotlib.animation as animation
+import pandas as pd
 
 
 class Metroplois:
@@ -42,38 +38,42 @@ class Metroplois:
     
     #@numba.njit("UniTuple(f8[:], 2)(f8[:,:], i8, f8, f8)", nopython=True, nogil=True)
     def run_metroplois(self, steps):
-        #temp = []  # List to store temperatures
-        #energy_array = []  # List to store energy values
-        #mag_array = []  # List to store magnetization values
+        graph_snapshots_array = []
         for i in range(0, steps):
             node = self.random_node()
             check = self.evaluate_delta(node)
-            if check == True:
-                self.graph.flip(node) #updates graph to new lattice configuration 
-                #temp.append(self.T)  # range of temperatures
-                #energy_array.append(self.graph.getE(node)) #create an array appends all energies 
-                #mag_array.append(self.graph.getM())  #append sum of spins
-              
-                #self.lattice.color_lattice(new_lattice)
-        
-        #return temp, energy_array, mag_array
+            if check == False:
+                self.graph.flip(node) #updates graph back to old lattice configuration
+            #graph_snapshots_array.append(self.graph.get_array())
+        #self.visualizer(graph_snapshots_array)
+            
     
-    def vizualize_algorithm(self, steps):
-        """
-        creates an animation of the metropolis algorithm running. 
-        this needs work, im not sure syntactically how to do this. will ask caroline."""
-        lattice_list = [] #initialize list that will store the state along every 100th iteration of the algorithm
-        iteration = 0
-        for i in range(0, steps):
-            node = self.random_node()
-            check = self.evaluate_delta(node)
-            if check == True:
-                self.graph.flip(node)
-            if iteration % 100 ==0:
-                lattice_list.append(copy.copy(self.graph))
-            iteration += 1
-        
+    def visualizer(self, graph_snapshots_array):
+        fps = 30
+        nSeconds = 5
+        snapshots = graph_snapshots_array
 
+        # First set up the figure, the axis, and the plot element we want to animate
+        fig = plt.figure( figsize=(8,8) )
+
+        a = snapshots[0]
+        im = plt.imshow(a, interpolation='none', aspect='auto', vmin=0, vmax=1)
+        #helper function
+        def animate_func(i):
+            if i % fps == 0:
+                print( '.', end ='' )
+
+            im.set_array(snapshots[i])
+            return [im]
+
+        anim = animation.FuncAnimation(
+                                       fig, 
+                                       animate_func, 
+                                       frames = nSeconds * fps,
+                                       interval = 1000 / fps, # in ms
+                                       )
+
+        anim.save('test_anim.mp4', fps=fps, extra_args=['-vcodec', 'libx264'])
             
 
                     
@@ -87,7 +87,7 @@ class Metroplois:
         """
         mag_array = []  # List to store magnetization values
         temp = []  # List to store temperatures
-        for T in range(1, temp_range, 1000000):
+        for T in range(1, temp_range, 1):
             self.graph.randomize_all()
             self.T = T
             self.run_metroplois(steps)

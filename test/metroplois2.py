@@ -44,8 +44,8 @@ class Metroplois:
             check = self.evaluate_delta(node)
             if check == False:
                 self.graph.flip(node) #updates graph back to old lattice configuration
-            #graph_snapshots_array.append(self.graph.get_array())
-        #self.visualizer(graph_snapshots_array)
+            graph_snapshots_array.append(self.graph.lat.copy())
+        self.visualizer(graph_snapshots_array)
             
     
     def visualizer(self, graph_snapshots_array):

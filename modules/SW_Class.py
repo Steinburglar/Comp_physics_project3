@@ -6,6 +6,7 @@ The program implements Swendsen Wang Algorithm on a 2D lattice
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib.colors import ListedColormap
 import random
 import lattice
 from IPython.display import Video
@@ -67,7 +68,7 @@ class SW_algorithm:
             return clusters, labels
         
             
-    def visualizer(self, df_array):
+    def visualizer(self, df_array, path):
         fps = 15
         nSeconds = 10
         snapshots = df_array
@@ -76,13 +77,16 @@ class SW_algorithm:
         fig = plt.figure(figsize=(8,8))
 
         a = snapshots[0]
-        im = plt.imshow(a, interpolation='none', aspect='auto', vmin=0, vmax=1)
+        colors = ['yellow', 'green', 'purple']  # Colors for -1, 0, and 1 respectively
+        cmap = ListedColormap(colors)
+        im = plt.imshow(a, cmap = cmap, interpolation='none', aspect='auto', vmin=0, vmax=1)
         #helper function
         def animate_func(i):
             if i % fps == 0:
                 print( '.', end ='' )
 
             im.set_array(snapshots[i])
+            plt.title('Temperature : '+ str(self.T))
             return [im]
 
         anim = animation.FuncAnimation(
@@ -93,10 +97,11 @@ class SW_algorithm:
                                        )
 
         
-        anim.save('SW_anim.mp4', fps=fps, extra_args=['-vcodec', 'libx264'])
+        anim.save(path, fps=fps, extra_args=['-vcodec', 'libx264'])
+        plt.close()
 
     
-    def update_clusters(self, steps, show_animation):
+    def update_clusters(self, steps, path, show_animation=False):
         """
         The method changes the cluster status and flips the atoms consecutively 
         """
@@ -123,35 +128,34 @@ class SW_algorithm:
             
         magnetism = self.lat.values.sum()
         if show_animation:
-            self.visualizer(df_array)
+            self.visualizer(df_array, path)
         
         return abs(magnetism)
-
-
-
-
-
-def temperature_plot(square_df):
     
-    """
-    The function runs the algorithm for a range of temperatures and gets
-    magnetism corresponding to certain temperature
-    @return an array of magnetism values and temperture 
-    """
- 
-    mag = []
-    T = np.arange(0.5, 10, 0.5)
- 
-    for i in T:
-        lat = SW_algorithm(square_df, 10, i)
-        mag.append(lat.update_clusters(5000, 0))
+    def plot_mag_temp(self, steps, temp_range, path, temp_step=1):
+        
+        """
+        The function runs the algorithm for a range of temperatures and gets
+        magnetism corresponding to certain temperature
+        @return an array of magnetism values and temperture 
+        """
+    
+        mag = []
+        T = np.arange(1, temp_range, temp_step)
+    
+        for i in T:
+            self.T = i
+            if self.T ==5:
+                mag.append(self.update_clusters(steps, path, show_animation=True))
+            else:
+                mag.append(self.update_clusters(steps, path))
 
-    plt.plot(T, mag, label='Magnetism')
-    plt.xlabel('Temperature')
-    plt.ylabel('Magnetism')
-    plt.grid()
-    plt.legend()
-    plt.show()
+        plt.plot(T, mag, label='Magnetism')
+        plt.xlabel('Temperature')
+        plt.ylabel('Magnetism')
+        plt.grid()
+        plt.legend()
+        plt.show()
 
 
 

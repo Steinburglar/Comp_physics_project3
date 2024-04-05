@@ -13,6 +13,7 @@ import random
 import matplotlib.animation as animation
 import pandas as pd
 from IPython.display import Video
+from matplotlib.colors import ListedColormap
 
 class Metroplois:
   
@@ -58,7 +59,9 @@ class Metroplois:
         fig = plt.figure( figsize=(8,8) )
 
         a = snapshots[0]
-        im = plt.imshow(a, interpolation='none', aspect='auto', vmin=0, vmax=1,)
+        colors = ['blue', 'white', 'red']  # Colors for -1, 0, and 1 respectively
+        cmap = ListedColormap(colors)
+        im = plt.imshow(a, cmap = cmap, interpolation='none', aspect='auto', vmin=0, vmax=1,)
         #helper function
         def animate_func(i):
             if i % fps == 0:
@@ -80,7 +83,7 @@ class Metroplois:
             
 
                     
-    def plot_mag_temp(self, steps, temp_range, temp_step=1):
+    def plot_mag_temp(self, steps, temp_range, path, temp_step=1):
         """
         method to run a metropolis algorithm for a variety of temperatures and plot
         the final magnetism as a function of that temperature
@@ -88,7 +91,6 @@ class Metroplois:
         @param: temp_range - list- list of the range of temeratures to be sampled,
         should be [lowest, highest, step]
         """
-        path = "Metropolis_anim.mp4"
         mag_array = []  # List to store magnetization values
         temp = []  # List to store temperatures
         for T in range(1, temp_range, temp_step):
@@ -107,21 +109,6 @@ class Metroplois:
         ax.set_ylabel('Magnetism')
         ax.grid()
         plt.show()
-    
-    """def plot_mag(self, steps, temp_range):
-
-        temp, energy_array, mag_array = self.run_metroplois(steps)
-        fig, ax = plt.subplots(1, 2, figsize=(12,4))
-        ax[0].plot(temp, energy_array)
-        ax[0].set_xlabel('Temperature')
-        ax[0].set_ylabel('Magnetism')
-        ax[1].plot(temp, mag_array)
-        ax[1].set_xlabel('Temperature')
-        ax[1].set_ylabel('Total Energy')
-        ax[1].grid()
-        ax[0].grid()
-        plt.show()
-    """
 
 
 

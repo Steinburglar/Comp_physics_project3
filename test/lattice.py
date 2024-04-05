@@ -3,6 +3,7 @@ Lucas Steinberger
 3-12-2024
 contains class definition, functions, and dependancies for a dataframe representation of a lattice. 
 """
+
 import random
 import pandas as pd
 import numpy as np
@@ -17,7 +18,7 @@ class Lattice:
     shape = False
     temp = 0
     
-    def __init__(self, J, size = 10, shape = False, rand = True):
+    def __init__(self, J, size = 10, shape = False, rand = True, holes = 0, dim = 2):
         self.J = J
         #initialize lattice grid --> 10x10 square grid filled w zeros
         data = [[0 for _ in range(size)] for _ in range(size)]
@@ -31,6 +32,8 @@ class Lattice:
             j_range = size
             if (shape == True):
                 j_range = size - i
+            if (dim == 1):
+                j_range = 1
             for j in range(j_range):
                 if (rand == False):
                     self.lat.at[i, j] = 1
@@ -40,6 +43,8 @@ class Lattice:
                         self.lat.at[i, j] = -1
                     else:
                         self.lat.at[i, j] = 1
+                if (holes > random.random()):
+                    self.lat.at[i, j] = 0
                         
     #change spin (takes in a list of coordinates)
     def flip(self, lat_list):
@@ -98,5 +103,4 @@ class Lattice:
     def color_lattice(self):
         plt.clf()
         plt.imshow(self.lat)
-                        
-    
+  

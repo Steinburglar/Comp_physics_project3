@@ -59,9 +59,7 @@ class Metroplois:
         fig = plt.figure( figsize=(8,8) )
 
         a = snapshots[0]
-        colors = ['blue', 'white', 'red']  # Colors for -1, 0, and 1 respectively
-        cmap = ListedColormap(colors)
-        im = plt.imshow(a, cmap = cmap, interpolation='none', aspect='auto', vmin=0, vmax=1,)
+        im = plt.imshow(a, interpolation='none', aspect='auto',)
         #helper function
         def animate_func(i):
             if i % fps == 0:

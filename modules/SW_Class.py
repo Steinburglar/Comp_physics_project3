@@ -108,6 +108,7 @@ class SW_algorithm:
         #change its spins
         #calculate magnetism
         df_array = []
+        
         for i in range(steps):
             clusters, labels = self.identify_cluster()
             num_clusters = len(clusters)

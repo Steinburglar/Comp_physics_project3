@@ -11,6 +11,7 @@ make an object that is the model
 
     methods:
         get M: simply sum the lattice sites
+        get total E: fids total sum of energies
         set initial config: might want 2 versions, start with randomized but we can try other things
             should have an exactly 50/50 starting config as well
         change temperature: changes temp instance variable
